@@ -8,8 +8,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.musicplayer.navigation.ALBUMS_ROUTE
 import com.example.musicplayer.navigation.Screen
-import com.example.musicplayer.screens.AlbumDetailScreen
-import com.example.musicplayer.screens.AlbumsScreen
+import com.example.musicplayer.screens.albums.AlbumDetailScreen
+import com.example.musicplayer.screens.albums.AlbumsScreen
 
 fun NavGraphBuilder.albumsNavGraph(
     navController: NavHostController

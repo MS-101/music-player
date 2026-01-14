@@ -1,4 +1,4 @@
-package com.example.musicplayer.screens
+package com.example.musicplayer.screens.songs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.navigation.Screen
+import com.example.musicplayer.screens.BaseScreen
 
 @Composable
 fun SongsScreen(

@@ -1,4 +1,4 @@
-package com.example.musicplayer.screens
+package com.example.musicplayer.screens.playlists
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +15,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.navigation.Screen
+import com.example.musicplayer.screens.BaseScreen
 
 @Composable
-fun AlbumsScreen(
+fun PlaylistsScreen(
     navController: NavController
 ) {
     BaseScreen(navController) {
@@ -27,7 +28,7 @@ fun AlbumsScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "Albums",
+                "Playlists",
                 color = Color.Red,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -36,11 +37,11 @@ fun AlbumsScreen(
             Button(
                 {
                     navController.navigate(
-                        Screen.AlbumDetail.passId(1)
+                        Screen.PlaylistDetail.passId(1)
                     )
                 }
             ) {
-                Text("Album Detail")
+                Text("Playlist Detail")
             }
         }
     }
@@ -48,8 +49,8 @@ fun AlbumsScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun AlbumsScreenPreview() {
-    AlbumsScreen(
+fun PlaylistsScreenPreview() {
+    PlaylistsScreen(
         rememberNavController()
     )
 }
