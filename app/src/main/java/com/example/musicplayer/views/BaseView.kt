@@ -1,4 +1,4 @@
-package com.example.musicplayer.screens
+package com.example.musicplayer.views
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -12,7 +12,7 @@ import com.example.musicplayer.components.NavPanel
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 
 @Composable
-fun BaseScreen(
+fun BaseView(
     navController: NavController,
     content: @Composable () -> Unit
 ) {
@@ -31,9 +31,9 @@ fun BaseScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun BaseScreenPreview() {
+fun BaseViewPreview() {
     MusicPlayerTheme {
-        BaseScreen(
+        BaseView(
             navController = rememberNavController()
         ) {}
     }

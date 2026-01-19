@@ -3,8 +3,6 @@ package com.example.musicplayer.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,44 +21,9 @@ fun NavPanel(
     Row(
         modifier = Modifier.fillMaxWidth().background(Color.Red)
     ) {
-        TextButton(
-            onClick = {
-                navController.navigate(SONGS_ROUTE) {
-                    popUpTo(SONGS_ROUTE)
-                }
-            }
-        ) {
-            Text(
-                "Songs",
-                color = Color.Black
-            )
-        }
-
-        TextButton(
-            onClick = {
-                navController.navigate(ALBUMS_ROUTE) {
-                    popUpTo(ALBUMS_ROUTE)
-                }
-            }
-        ) {
-            Text(
-                "Albums",
-                color = Color.Black
-            )
-        }
-
-        TextButton(
-            onClick = {
-                navController.navigate(PLAYLISTS_ROUTE) {
-                    popUpTo(PLAYLISTS_ROUTE)
-                }
-            }
-        ) {
-            Text(
-                "Playlists",
-                color = Color.Black
-            )
-        }
+        NavPanelItem(navController, SONGS_ROUTE, "Songs")
+        NavPanelItem(navController, ALBUMS_ROUTE, "Albums")
+        NavPanelItem(navController, PLAYLISTS_ROUTE, "Playlists")
     }
 }
 

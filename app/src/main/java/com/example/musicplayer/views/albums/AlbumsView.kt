@@ -1,4 +1,4 @@
-package com.example.musicplayer.screens.albums
+package com.example.musicplayer.views.albums
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,22 +14,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.screens.BaseScreen
+import com.example.musicplayer.navigation.View
+import com.example.musicplayer.views.BaseView
 
 @Composable
-fun AlbumDetailScreen(
+fun AlbumsView(
     navController: NavController
 ) {
-    val id = navController.currentBackStackEntry?.arguments?.getInt("id") ?: 0
-
-    BaseScreen(navController) {
+    BaseView(navController) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "Album Detail - $id",
+                "Albums",
                 color = Color.Red,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -37,10 +36,12 @@ fun AlbumDetailScreen(
 
             Button(
                 {
-                    navController.popBackStack()
+                    navController.navigate(
+                        View.AlbumDetail.passId(1)
+                    )
                 }
             ) {
-                Text("Return")
+                Text("Album Detail")
             }
         }
     }
@@ -48,8 +49,8 @@ fun AlbumDetailScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun AlbumDetailScreenPreview() {
-    AlbumDetailScreen(
+fun AlbumsViewPreview() {
+    AlbumsView(
         rememberNavController()
     )
 }

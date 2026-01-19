@@ -7,32 +7,32 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.musicplayer.navigation.PLAYLISTS_ROUTE
-import com.example.musicplayer.navigation.Screen
-import com.example.musicplayer.screens.playlists.PlaylistDetailScreen
-import com.example.musicplayer.screens.playlists.PlaylistsScreen
+import com.example.musicplayer.navigation.View
+import com.example.musicplayer.views.playlists.PlaylistDetailView
+import com.example.musicplayer.views.playlists.PlaylistsView
 
 fun NavGraphBuilder.playlistsNavGraph(
     navController: NavHostController
 ) {
     navigation(
-        startDestination = Screen.Songs.route,
+        startDestination = View.Playlists.route,
         route = PLAYLISTS_ROUTE
     ) {
         composable(
-            route = Screen.Playlists.route
+            route = View.Playlists.route
         ) {
-            PlaylistsScreen(
+            PlaylistsView(
                 navController = navController
             )
         }
 
         composable(
-            route = Screen.PlaylistDetail.route,
+            route = View.PlaylistDetail.route,
             arguments = listOf(navArgument("id") {
                 type = NavType.IntType
             })
         ) {
-            PlaylistDetailScreen(
+            PlaylistDetailView(
                 navController = navController
             )
         }
