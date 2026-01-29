@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.media3.common.Player
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
@@ -39,6 +40,8 @@ data class PlayerState(
     val isPlaying: Boolean,
     val hasPreviousSong: Boolean,
     val hasNextSong: Boolean,
+    val shuffleModeEnabled: Boolean,
+    val repeatMode: Int
 )
 
 data class PlayerActions(
@@ -47,6 +50,8 @@ data class PlayerActions(
     val onPauseSong: () -> Unit,
     val onPlayPreviousSong: () -> Unit,
     val onPlayNextSong: () -> Unit,
+    val onSetShuffleMode: (shuffleModeEnabled: Boolean) -> Unit,
+    val onSetRepeatMode: (repeatMode: Int) -> Unit
 )
 
 @Composable
@@ -59,6 +64,8 @@ fun PlayerView(
     val songPosition by viewModel.songPosition
     val hasPreviousSong by viewModel.hasPreviousSong
     val hasNextSong by viewModel.hasNextSong
+    val shuffleModeEnabled by viewModel.shuffleModeEnabled
+    val repeatMode by viewModel.repeatMode
 
     PlayerViewContent(
         navController = navController,
@@ -67,14 +74,18 @@ fun PlayerView(
             songPosition,
             isPlaying,
             hasPreviousSong,
-            hasNextSong
+            hasNextSong,
+            shuffleModeEnabled,
+            repeatMode
         ),
         playerActions = PlayerActions(
             { position -> viewModel.seekSong(position) },
             { viewModel.resumeSong() },
             { viewModel.pauseSong() },
             { viewModel.playPreviousSong() },
-            { viewModel.playNextSong() }
+            { viewModel.playNextSong() },
+            { shuffleModeEnabled -> viewModel.setShuffleMode(shuffleModeEnabled) },
+            { repeatMode -> viewModel.setRepeatMode(repeatMode) }
         )
     )
 }
@@ -153,11 +164,25 @@ fun PlayerViewContent(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth().height(70.dp).padding(vertical = 10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.shuffle),
-                    contentDescription = "Shuffle Queue",
-                    colorFilter = ColorFilter.tint(Color.Gray)
-                )
+                if (playerState.shuffleModeEnabled) {
+                    Image(
+                        painter = painterResource(id = R.drawable.shuffle),
+                        contentDescription = "Shuffle Queue (Enabled)",
+                        colorFilter = ColorFilter.tint(Color.Red),
+                        modifier = Modifier.clickable {
+                            playerActions.onSetShuffleMode(false)
+                        }
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.shuffle),
+                        contentDescription = "Shuffle Queue (Disabled)",
+                        colorFilter = ColorFilter.tint(Color.Gray),
+                        modifier = Modifier.clickable {
+                            playerActions.onSetShuffleMode(true)
+                        }
+                    )
+                }
 
                 Image(
                     painter = painterResource(id = R.drawable.step_backward),
@@ -201,11 +226,37 @@ fun PlayerViewContent(
                     }
                 )
 
-                Image(
-                    painter = painterResource(id = R.drawable.repeat),
-                    contentDescription = "Repeat Queue",
-                    colorFilter = ColorFilter.tint(Color.Gray)
-                )
+                when (playerState.repeatMode) {
+                    Player.REPEAT_MODE_OFF ->
+                        Image(
+                            painter = painterResource(id = R.drawable.repeat),
+                            contentDescription = "Repeat Queue",
+                            colorFilter = ColorFilter.tint(Color.Gray),
+                            modifier = Modifier.clickable {
+                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_ALL)
+                            }
+                        )
+
+                    Player.REPEAT_MODE_ONE ->
+                        Image(
+                            painter = painterResource(id = R.drawable.repeat_one),
+                            contentDescription = "Repeat Queue",
+                            colorFilter = ColorFilter.tint(Color.Red),
+                            modifier = Modifier.clickable {
+                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_OFF)
+                            }
+                        )
+
+                    Player.REPEAT_MODE_ALL ->
+                        Image(
+                            painter = painterResource(id = R.drawable.repeat),
+                            contentDescription = "Repeat Queue",
+                            colorFilter = ColorFilter.tint(Color.Red),
+                            modifier = Modifier.clickable {
+                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_ONE)
+                            }
+                        )
+                }
             }
         }
     }
@@ -227,9 +278,13 @@ fun PlayerViewPreview() {
             10000,
             isPlaying = true,
             hasPreviousSong = true,
-            hasNextSong = true
+            hasNextSong = true,
+            shuffleModeEnabled = false,
+            repeatMode = Player.REPEAT_MODE_ONE
         ),
         playerActions = PlayerActions(
+            {},
+            {},
             {},
             {},
             {},

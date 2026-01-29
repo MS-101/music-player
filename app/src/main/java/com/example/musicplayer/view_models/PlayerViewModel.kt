@@ -1,6 +1,7 @@
 package com.example.musicplayer.view_models
 
 import android.app.Application
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -21,6 +22,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     val isPlaying = mutableStateOf(false)
     val hasPreviousSong = mutableStateOf(false)
     val hasNextSong = mutableStateOf(false)
+    val shuffleModeEnabled = mutableStateOf(false)
+    val repeatMode = mutableIntStateOf(0)
 
     init {
         exoplayer.addListener(object : Player.Listener {
@@ -32,6 +35,17 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 isPlaying.value = playWhenReady
+            }
+
+            override fun onShuffleModeEnabledChanged(shuffleModeEnabledChanged: Boolean) {
+                shuffleModeEnabled.value = shuffleModeEnabledChanged
+            }
+
+            override fun onRepeatModeChanged(repeatModeChanged: Int) {
+                super.onRepeatModeChanged(repeatModeChanged)
+
+                repeatMode.intValue = repeatModeChanged
+                updateNavigationButtons()
             }
         })
 
@@ -76,4 +90,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     fun resumeSong() = exoplayer.play()
     fun playPreviousSong() = exoplayer.seekToPreviousMediaItem()
     fun playNextSong() = exoplayer.seekToNextMediaItem()
+    fun setShuffleMode(shuffleModeEnabled: Boolean) {
+        exoplayer.shuffleModeEnabled = shuffleModeEnabled
+    }
+    fun setRepeatMode(repeatMode: Int) {
+        exoplayer.repeatMode = repeatMode
+    }
 }
