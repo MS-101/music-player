@@ -3,9 +3,13 @@ package com.example.musicplayer.view_models
 import android.app.Application
 import android.content.ContentUris
 import android.database.ContentObserver
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Size
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +20,7 @@ import com.example.musicplayer.models.Song
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.Q)
 class AlbumsViewModel(application: Application) : AndroidViewModel(application) {
     private val _albums = MutableLiveData<List<Album>>()
     val albums: LiveData<List<Album>> = _albums
@@ -75,10 +80,22 @@ class AlbumsViewModel(application: Application) : AndroidViewModel(application) 
                     val title = cursor.getString(albumColumn)
                     val artist = cursor.getString(artistColumn)
 
-                    val songs = loadAlbumSongs(id)
+                    val thumbnailUri = ContentUris.withAppendedId(
+                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+                    val thumbnail: Bitmap? = try {
+                        application.contentResolver.loadThumbnail(
+                            thumbnailUri, Size(500, 500), null
+                        )
+                    } catch (_: Exception) {
+                        null
+                    }
+
+                    val songs = loadAlbumSongs(id, thumbnail)
 
                     albums.add(
-                        Album(id, uri, title, artist, songs)
+                        Album(id, uri, title, artist, songs, thumbnail)
                     )
                 }
             }
@@ -87,7 +104,7 @@ class AlbumsViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun loadAlbumSongs(albumId: Long): List<Song> {
+    private fun loadAlbumSongs(albumId: Long, thumbnail: Bitmap?): List<Song> {
         val songs = mutableListOf<Song>()
         val queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
@@ -123,7 +140,7 @@ class AlbumsViewModel(application: Application) : AndroidViewModel(application) 
                 val duration = cursor.getLong(durationCol)
 
                 songs.add(
-                    Song(id, uri, title, artist, duration)
+                    Song(id, uri, title, artist, duration, thumbnail)
                 )
             }
         }

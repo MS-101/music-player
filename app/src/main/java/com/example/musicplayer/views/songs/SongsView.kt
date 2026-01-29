@@ -1,5 +1,7 @@
 package com.example.musicplayer.views.songs
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,6 +20,7 @@ import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 import com.example.musicplayer.view_models.SongsViewModel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SongsView(
     navController: NavController,

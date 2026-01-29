@@ -3,18 +3,23 @@ package com.example.musicplayer.view_models
 import android.app.Application
 import android.content.ContentUris
 import android.database.ContentObserver
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
+import android.util.Size
 import com.example.musicplayer.models.Song
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.Q)
 class SongsViewModel(application: Application) : AndroidViewModel(application) {
     private val _songs = MutableLiveData<List<Song>>()
     val songs: LiveData<List<Song>> = _songs
@@ -44,7 +49,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.DURATION
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.ALBUM_ID,
             )
 
             val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
@@ -69,6 +75,9 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
                 val durationColumn = cursor.getColumnIndexOrThrow(
                     MediaStore.Audio.Media.DURATION
                 )
+                val albumIdColumn = cursor.getColumnIndexOrThrow(
+                    MediaStore.Audio.Media.ALBUM_ID
+                )
 
                 while(cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
@@ -79,8 +88,21 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
                     val title = cursor.getString(titleColumn)
                     val artist = cursor.getString(artistColumn)
                     val duration = cursor.getLong(durationColumn)
+                    val albumId = cursor.getLong(albumIdColumn)
 
-                    songs.add(Song(id, uri, title, artist, duration))
+                    val thumbnailUri = ContentUris.withAppendedId(
+                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        albumId
+                    )
+                    val thumbnail: Bitmap? = try {
+                        application.contentResolver.loadThumbnail(
+                            thumbnailUri, Size(5100, 500), null
+                        )
+                    } catch (_: Exception) {
+                        null
+                    }
+
+                    songs.add(Song(id, uri, title, artist, duration, thumbnail))
                 }
             }
 

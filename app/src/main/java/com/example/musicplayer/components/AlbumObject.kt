@@ -1,5 +1,6 @@
 package com.example.musicplayer.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.AsyncImage
 import com.example.musicplayer.R
 import com.example.musicplayer.models.Album
 import com.example.musicplayer.navigation.View
@@ -45,16 +45,19 @@ fun AlbumObject(
             }
     ) {
         Row {
-            AsyncImage(
-                model = album.artworkUri,
-                contentDescription = "Album Image",
-                modifier = Modifier
-                    .width(100.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.album),
-                placeholder = painterResource(R.drawable.album)
-            )
+            if (album.thumbnail != null) {
+                Image(
+                    bitmap = album.thumbnail.asImageBitmap(),
+                    contentDescription = "Album Image",
+                    modifier = Modifier.width(100.dp).fillMaxHeight()
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.album),
+                    contentDescription = "Album Image",
+                    modifier = Modifier.width(100.dp).fillMaxHeight()
+                )
+            }
 
             Column {
                 Text(

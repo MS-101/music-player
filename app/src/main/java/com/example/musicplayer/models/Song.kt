@@ -1,5 +1,6 @@
 package com.example.musicplayer.models
 
+import android.graphics.Bitmap
 import android.net.Uri
 
 data class Song (
@@ -7,5 +8,6 @@ data class Song (
     val uri: Uri,
     val title: String,
     val artist: String,
-    val duration: Long
+    val duration: Long,
+    val thumbnail: Bitmap? = null
 )

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,11 +63,19 @@ fun PlayerPanelContent(
                 navController.navigate(View.Player.route)
             }
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.song),
-                contentDescription = "Song Image",
-                modifier = Modifier.fillMaxHeight().background(Color.White)
-            )
+            if (state.song?.thumbnail != null) {
+                Image(
+                    bitmap = state.song.thumbnail.asImageBitmap(),
+                    contentDescription = "Song Image",
+                    modifier = Modifier.fillMaxHeight().background(Color.White)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.song),
+                    contentDescription = "Song Image",
+                    modifier = Modifier.fillMaxHeight().background(Color.White)
+                )
+            }
 
             Column(
                 modifier = Modifier.fillMaxSize().padding(10.dp)

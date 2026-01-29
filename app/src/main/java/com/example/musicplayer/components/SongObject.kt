@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,11 +40,19 @@ fun SongObject(
             }
     ) {
         Row {
-            Image(
-                painter = painterResource(id = R.drawable.song),
-                contentDescription = "Song Image",
-                modifier = Modifier.width(100.dp).fillMaxHeight()
-            )
+            if (song.thumbnail != null) {
+                Image(
+                    bitmap = song.thumbnail.asImageBitmap(),
+                    contentDescription = "Song Image",
+                    modifier = Modifier.width(100.dp).fillMaxHeight()
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.song),
+                    contentDescription = "Song Image",
+                    modifier = Modifier.width(100.dp).fillMaxHeight()
+                )
+            }
 
             Column {
                 Text(
@@ -74,7 +83,7 @@ fun SongObject(
 fun SongObjectPreview() {
     MusicPlayerTheme {
         SongObject(
-            Song(0,"".toUri(),"Title","Artist",38000)
+            Song(0, "".toUri(), "Title", "Artist", 38000)
         ) {}
     }
 }

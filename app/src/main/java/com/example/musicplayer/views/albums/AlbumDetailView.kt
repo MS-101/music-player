@@ -1,5 +1,7 @@
 package com.example.musicplayer.views.albums
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -37,6 +39,7 @@ import com.example.musicplayer.view_models.AlbumsViewModel
 import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AlbumDetailView(
     navController: NavController,

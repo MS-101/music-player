@@ -1,8 +1,7 @@
 package com.example.musicplayer.models
 
-import android.content.ContentUris
 import android.net.Uri
-import androidx.core.net.toUri
+import coil3.Bitmap
 
 data class Album (
     val id: Long,
@@ -10,8 +9,5 @@ data class Album (
     val title: String,
     val artist: String,
     val songs: List<Song>,
-    val artworkUri: Uri = ContentUris.withAppendedId(
-        "content://media/external/audio/albumart".toUri(),
-        id
-    )
+    val thumbnail: Bitmap? = null
 )

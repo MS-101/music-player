@@ -116,8 +116,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
-
     fun seekSong(position: Long) = exoplayer.seekTo(position)
     fun pauseSong() = exoplayer.pause()
     fun resumeSong() = exoplayer.play()
