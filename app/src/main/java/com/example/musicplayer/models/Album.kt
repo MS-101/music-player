@@ -1,7 +1,7 @@
 package com.example.musicplayer.models
 
+import android.graphics.Bitmap
 import android.net.Uri
-import coil3.Bitmap
 
 data class Album (
     val id: Long,
