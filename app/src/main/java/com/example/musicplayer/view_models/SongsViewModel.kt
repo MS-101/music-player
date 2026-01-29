@@ -72,23 +72,15 @@ class SongsViewModel(application: Application) : AndroidViewModel(application) {
 
                 while(cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
+                    val uri = ContentUris.withAppendedId(
+                        queryUri, id
+                    )
+
                     val title = cursor.getString(titleColumn)
                     val artist = cursor.getString(artistColumn)
                     val duration = cursor.getLong(durationColumn)
 
-                    val contentUri = ContentUris.withAppendedId(
-                        queryUri, id
-                    )
-
-                    songs.add(
-                        Song(
-                            id,
-                            contentUri,
-                            title,
-                            artist,
-                            duration
-                        )
-                    )
+                    songs.add(Song(id, uri, title, artist, duration))
                 }
             }
 

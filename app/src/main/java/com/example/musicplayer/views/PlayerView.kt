@@ -57,7 +57,7 @@ fun PlayerViewContent(
             modifier = Modifier.fillMaxSize().padding(10.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.music_note),
+                painter = painterResource(id = R.drawable.song),
                 contentDescription = "Song Image",
                 modifier = Modifier.fillMaxWidth().weight(1f)
             )

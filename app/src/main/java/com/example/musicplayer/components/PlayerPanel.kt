@@ -63,7 +63,7 @@ fun PlayerPanelContent(
             }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.music_note),
+                painter = painterResource(id = R.drawable.song),
                 contentDescription = "Song Image",
                 modifier = Modifier.fillMaxHeight().background(Color.White)
             )

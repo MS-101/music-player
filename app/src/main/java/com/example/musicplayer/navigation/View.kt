@@ -12,7 +12,7 @@ sealed class View(val route: String) {
 
     object Albums: View(route = "albums_screen")
     object AlbumDetail: View(route = "album_detail_screen/{id}") {
-        fun passId(id: Int): String {
+        fun passId(id: Long): String {
             return this.route.replace("{id}", id.toString())
         }
     }

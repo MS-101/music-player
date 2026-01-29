@@ -20,34 +20,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
-import com.example.musicplayer.models.Song
+import com.example.musicplayer.models.Album
+import com.example.musicplayer.navigation.View
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
-import com.example.musicplayer.utils.toMmSs
 
 @Composable
-fun SongObject(
-    song: Song,
-    onClick : () -> Unit
+fun AlbumObject(
+    navController: NavController,
+    album: Album
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth().height(125.dp)
             .padding(5.dp)
             .clickable {
-                onClick()
+                navController.navigate(
+                    View.AlbumDetail.passId(album.id)
+                )
             }
     ) {
         Row {
             Image(
-                painter = painterResource(id = R.drawable.song),
-                contentDescription = "Song Image",
+                painter = painterResource(id = R.drawable.album),
+                contentDescription = "Album Image",
                 modifier = Modifier.width(100.dp).fillMaxHeight()
             )
 
             Column {
                 Text(
-                    text = song.title,
+                    text = album.title,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Black,
                     maxLines = 1,
@@ -56,12 +60,8 @@ fun SongObject(
                         .basicMarquee()
                 )
                 Text(
-                    text = song.artist,
+                    text = album.artist,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(5.dp)
-                )
-                Text(
-                    text = song.duration.toMmSs(),
                     modifier = Modifier.padding(5.dp)
                 )
             }
@@ -71,10 +71,11 @@ fun SongObject(
 
 @Preview(showBackground = true)
 @Composable
-fun SongObjectPreview() {
+fun AlbumObjectPreview() {
     MusicPlayerTheme {
-        SongObject(
-            Song(0,"".toUri(),"Title","Artist",38000)
-        ) {}
+        AlbumObject(
+            rememberNavController(),
+            Album(0, "".toUri(), "Title", "Artist", emptyList())
+        )
     }
 }

@@ -1,6 +1,5 @@
 package com.example.musicplayer.views.songs
 
-import SongObject
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,6 +12,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.musicplayer.components.SongObject
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
@@ -21,26 +21,26 @@ import com.example.musicplayer.view_models.SongsViewModel
 @Composable
 fun SongsView(
     navController: NavController,
-    viewModel: SongsViewModel = viewModel(),
-    playerViewModel: PlayerViewModel
+    playerViewModel: PlayerViewModel,
+    viewModel: SongsViewModel = viewModel()
 ) {
     val songs by viewModel.songs.observeAsState(emptyList())
 
-    SongsViewContent(navController, songs, playerViewModel)
+    SongsViewContent(navController, playerViewModel, songs)
 }
 
 @Composable
 fun SongsViewContent(
     navController: NavController,
-    songs: List<Song>,
-    playerViewModel: PlayerViewModel? = null
+    playerViewModel: PlayerViewModel? = null,
+    songs: List<Song>
 ) {
     BaseView(navController, playerViewModel) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(songs) {
-                index, song -> SongObject(song, onSongClick = {
+                index, song -> SongObject(song, onClick = {
                     playerViewModel?.setSongs(songs, index)
                 })
             }

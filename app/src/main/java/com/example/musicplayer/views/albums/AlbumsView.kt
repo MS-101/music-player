@@ -1,49 +1,46 @@
 package com.example.musicplayer.views.albums
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.navigation.View
+import com.example.musicplayer.components.AlbumObject
+import com.example.musicplayer.models.Album
+import com.example.musicplayer.view_models.AlbumsViewModel
 import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 
 @Composable
 fun AlbumsView(
     navController: NavController,
-    playerViewModel: PlayerViewModel? = null
+    playerViewModel: PlayerViewModel,
+    viewModel: AlbumsViewModel = viewModel(),
+) {
+    val albums by viewModel.albums.observeAsState(emptyList())
+
+    AlbumsViewContent(navController, playerViewModel, albums)
+}
+
+@Composable
+fun AlbumsViewContent(
+    navController: NavController,
+    playerViewModel: PlayerViewModel? = null,
+    albums: List<Album>,
 ) {
     BaseView(navController, playerViewModel) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                "Albums",
-                color = Color.Red,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Button(
-                {
-                    navController.navigate(
-                        View.AlbumDetail.passId(1)
-                    )
-                }
-            ) {
-                Text("Album Detail")
+            items(albums) {
+                album -> AlbumObject(navController, album)
             }
         }
     }
@@ -52,7 +49,11 @@ fun AlbumsView(
 @Preview(showBackground = true)
 @Composable
 fun AlbumsViewPreview() {
-    AlbumsView(
-        rememberNavController()
+    AlbumsViewContent(
+        rememberNavController(),
+        albums = listOf(
+            Album(1, "".toUri(), "Album 1", "Artist A", emptyList()),
+            Album(2, "".toUri(), "Album 2", "Artist B", emptyList())
+        )
     )
 }

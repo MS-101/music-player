@@ -32,7 +32,7 @@ fun NavGraphBuilder.albumsNavGraph(
         composable (
             route = View.AlbumDetail.route,
             arguments = listOf(navArgument("id") {
-                type = NavType.IntType
+                type = NavType.LongType
             })
         ) {
             AlbumDetailView(
