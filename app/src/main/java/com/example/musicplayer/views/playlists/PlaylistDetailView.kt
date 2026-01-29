@@ -14,15 +14,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 
 @Composable
 fun PlaylistDetailView(
-    navController: NavController
+    navController: NavController,
+    playerViewModel: PlayerViewModel? = null
 ) {
     val id = navController.currentBackStackEntry?.arguments?.getInt("id") ?: 0
 
-    BaseView(navController) {
+    BaseView(navController, playerViewModel) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,

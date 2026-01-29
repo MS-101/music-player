@@ -8,11 +8,13 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.musicplayer.navigation.ALBUMS_ROUTE
 import com.example.musicplayer.navigation.View
+import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.albums.AlbumDetailView
 import com.example.musicplayer.views.albums.AlbumsView
 
 fun NavGraphBuilder.albumsNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    playerViewModel: PlayerViewModel
 ) {
     navigation(
         startDestination = View.Albums.route,
@@ -22,7 +24,8 @@ fun NavGraphBuilder.albumsNavGraph(
             route = View.Albums.route
         ) {
             AlbumsView(
-                navController = navController
+                navController = navController,
+                playerViewModel = playerViewModel
             )
         }
 
@@ -33,7 +36,8 @@ fun NavGraphBuilder.albumsNavGraph(
             })
         ) {
             AlbumDetailView(
-                navController = navController
+                navController = navController,
+                playerViewModel = playerViewModel
             )
         }
     }

@@ -30,8 +30,8 @@ fun SongObject(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth().height(200.dp)
-            .padding(24.dp)
+            .fillMaxWidth().height(125.dp)
+            .padding(5.dp)
             .clickable {
                 onSongClick()
             }
@@ -50,17 +50,17 @@ fun SongObject(
                     fontWeight = FontWeight.Black,
                     maxLines = 1,
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(5.dp)
                         .basicMarquee()
                 )
                 Text(
                     text = song.artist,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(12.dp)
+                    modifier = Modifier.padding(5.dp)
                 )
                 Text(
                     text = song.duration.toMmSs(),
-                    modifier = Modifier.padding(12.dp)
+                    modifier = Modifier.padding(5.dp)
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.example.musicplayer.view_models
 
 import android.app.Application
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,16 @@ import com.example.musicplayer.models.Song
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+
+data class PlayerState(
+    val song: Song?,
+    val songPosition: Long,
+    val isPlaying: Boolean,
+    val hasPreviousSong: Boolean,
+    val hasNextSong: Boolean,
+    val shuffleModeEnabled: Boolean,
+    val repeatMode: Int
+)
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application) {
     val exoplayer = ExoPlayer.Builder(application.applicationContext).build()
@@ -57,6 +68,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        exoplayer.release()
+    }
+
     private fun updateNavigationButtons() {
         hasPreviousSong.value = exoplayer.hasPreviousMediaItem()
         hasNextSong.value = exoplayer.hasNextMediaItem()
@@ -64,6 +80,26 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     var songs: List<Song> = listOf()
         private set
+
+    fun getState(): PlayerState {
+        val song by song
+        val isPlaying by isPlaying
+        val songPosition by songPosition
+        val hasPreviousSong by hasPreviousSong
+        val hasNextSong by hasNextSong
+        val shuffleModeEnabled by shuffleModeEnabled
+        val repeatMode by repeatMode
+
+        return PlayerState(
+            song,
+            songPosition,
+            isPlaying,
+            hasPreviousSong,
+            hasNextSong,
+            shuffleModeEnabled,
+            repeatMode
+        )
+    }
 
     fun setSongs(songs: List<Song>, startIndex: Int = 0) {
         this.songs = songs
@@ -80,10 +116,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        exoplayer.release()
-    }
+
 
     fun seekSong(position: Long) = exoplayer.seekTo(position)
     fun pauseSong() = exoplayer.pause()

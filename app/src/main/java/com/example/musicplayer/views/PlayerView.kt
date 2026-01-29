@@ -14,7 +14,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,70 +30,27 @@ import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.utils.toMmSs
+import com.example.musicplayer.view_models.PlayerState
 import com.example.musicplayer.view_models.PlayerViewModel
-
-
-data class PlayerState(
-    val song: Song?,
-    val songPosition: Long,
-    val isPlaying: Boolean,
-    val hasPreviousSong: Boolean,
-    val hasNextSong: Boolean,
-    val shuffleModeEnabled: Boolean,
-    val repeatMode: Int
-)
-
-data class PlayerActions(
-    val onSeekSong: (position: Long) -> Unit,
-    val onResumeSong: () -> Unit,
-    val onPauseSong: () -> Unit,
-    val onPlayPreviousSong: () -> Unit,
-    val onPlayNextSong: () -> Unit,
-    val onSetShuffleMode: (shuffleModeEnabled: Boolean) -> Unit,
-    val onSetRepeatMode: (repeatMode: Int) -> Unit
-)
 
 @Composable
 fun PlayerView(
     navController: NavController,
-    viewModel: PlayerViewModel
-) {
-    val song by viewModel.song
-    val isPlaying by viewModel.isPlaying
-    val songPosition by viewModel.songPosition
-    val hasPreviousSong by viewModel.hasPreviousSong
-    val hasNextSong by viewModel.hasNextSong
-    val shuffleModeEnabled by viewModel.shuffleModeEnabled
-    val repeatMode by viewModel.repeatMode
+    viewModel: PlayerViewModel,
 
+) {
     PlayerViewContent(
         navController = navController,
-        playerState = PlayerState(
-            song,
-            songPosition,
-            isPlaying,
-            hasPreviousSong,
-            hasNextSong,
-            shuffleModeEnabled,
-            repeatMode
-        ),
-        playerActions = PlayerActions(
-            { position -> viewModel.seekSong(position) },
-            { viewModel.resumeSong() },
-            { viewModel.pauseSong() },
-            { viewModel.playPreviousSong() },
-            { viewModel.playNextSong() },
-            { shuffleModeEnabled -> viewModel.setShuffleMode(shuffleModeEnabled) },
-            { repeatMode -> viewModel.setRepeatMode(repeatMode) }
-        )
+        viewModel = viewModel,
+        state = viewModel.getState()
     )
 }
 
 @Composable
 fun PlayerViewContent(
     navController: NavController,
-    playerState: PlayerState,
-    playerActions: PlayerActions
+    viewModel: PlayerViewModel? = null,
+    state: PlayerState
 ) {
     BaseView(navController) {
         Column (
@@ -110,7 +66,7 @@ fun PlayerViewContent(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)
             ) {
                 Text(
-                    text = playerState.song?.title ?: "N/A",
+                    text = state.song?.title ?: "N/A",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Black,
                     maxLines = 1,
@@ -118,7 +74,7 @@ fun PlayerViewContent(
                 )
 
                 Text(
-                    text = playerState.song?.artist ?: "N/A",
+                    text = state.song?.artist ?: "N/A",
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -132,18 +88,18 @@ fun PlayerViewContent(
             ) {
 
                 Text(
-                    playerState.songPosition.toMmSs(),
+                    state.songPosition.toMmSs(),
                     fontSize = 20.sp,
                 )
 
                 Slider(
                     value =
-                        if (playerState.song != null)
-                            playerState.songPosition.toFloat() / playerState.song.duration.toFloat()
+                        if (state.song != null)
+                            state.songPosition.toFloat() / state.song.duration.toFloat()
                         else 0F,
                     onValueChange = {
-                        if (playerState.song != null)
-                            playerActions.onSeekSong((it * playerState.song.duration).toLong())
+                        if (state.song != null)
+                            viewModel?.seekSong((it * state.song.duration).toLong())
                     },
                     colors = SliderDefaults.colors(
                         thumbColor = Color.Red,
@@ -154,7 +110,7 @@ fun PlayerViewContent(
                 )
 
                 Text(
-                    playerState.song?.duration?.toMmSs() ?: "00:00",
+                    state.song?.duration?.toMmSs() ?: "00:00",
                     fontSize = 20.sp,
                 )
             }
@@ -164,13 +120,13 @@ fun PlayerViewContent(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth().height(70.dp).padding(vertical = 10.dp)
             ) {
-                if (playerState.shuffleModeEnabled) {
+                if (state.shuffleModeEnabled) {
                     Image(
                         painter = painterResource(id = R.drawable.shuffle),
                         contentDescription = "Shuffle Queue (Enabled)",
                         colorFilter = ColorFilter.tint(Color.Red),
                         modifier = Modifier.clickable {
-                            playerActions.onSetShuffleMode(false)
+                            viewModel?.setShuffleMode(false)
                         }
                     )
                 } else {
@@ -179,7 +135,7 @@ fun PlayerViewContent(
                         contentDescription = "Shuffle Queue (Disabled)",
                         colorFilter = ColorFilter.tint(Color.Gray),
                         modifier = Modifier.clickable {
-                            playerActions.onSetShuffleMode(true)
+                            viewModel?.setShuffleMode(true)
                         }
                     )
                 }
@@ -188,20 +144,20 @@ fun PlayerViewContent(
                     painter = painterResource(id = R.drawable.step_backward),
                     contentDescription = "Previous Song",
                     colorFilter = ColorFilter.tint(
-                        if (playerState.hasPreviousSong) Color.Black else Color.Gray
+                        if (state.hasPreviousSong) Color.Black else Color.Gray
                     ),
                     modifier = Modifier.clickable {
-                        if (playerState.hasPreviousSong)
-                            playerActions.onPlayPreviousSong()
+                        if (state.hasPreviousSong)
+                            viewModel?.playPreviousSong()
                     }
                 )
 
-                if (playerState.isPlaying) {
+                if (state.isPlaying) {
                     Image(
                         painter = painterResource(id = R.drawable.pause),
                         contentDescription = "Pause Song",
                         modifier = Modifier.clickable {
-                            playerActions.onPauseSong()
+                            viewModel?.pauseSong()
                         }
                     )
                 } else {
@@ -209,7 +165,7 @@ fun PlayerViewContent(
                         painter = painterResource(id = R.drawable.play),
                         contentDescription = "Resume Song",
                         modifier = Modifier.clickable {
-                            playerActions.onResumeSong()
+                            viewModel?.resumeSong()
                         }
                     )
                 }
@@ -218,22 +174,22 @@ fun PlayerViewContent(
                     painter = painterResource(id = R.drawable.step_forward),
                     contentDescription = "Next Song",
                     colorFilter = ColorFilter.tint(
-                        if (playerState.hasNextSong) Color.Black else Color.Gray
+                        if (state.hasNextSong) Color.Black else Color.Gray
                     ),
                     modifier = Modifier.clickable{
-                        if (playerState.hasNextSong)
-                            playerActions.onPlayNextSong()
+                        if (state.hasNextSong)
+                            viewModel?.playNextSong()
                     }
                 )
 
-                when (playerState.repeatMode) {
+                when (state.repeatMode) {
                     Player.REPEAT_MODE_OFF ->
                         Image(
                             painter = painterResource(id = R.drawable.repeat),
                             contentDescription = "Repeat Queue",
                             colorFilter = ColorFilter.tint(Color.Gray),
                             modifier = Modifier.clickable {
-                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_ALL)
+                                viewModel?.setRepeatMode(Player.REPEAT_MODE_ALL)
                             }
                         )
 
@@ -243,7 +199,7 @@ fun PlayerViewContent(
                             contentDescription = "Repeat Queue",
                             colorFilter = ColorFilter.tint(Color.Red),
                             modifier = Modifier.clickable {
-                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_OFF)
+                                viewModel?.setRepeatMode(Player.REPEAT_MODE_OFF)
                             }
                         )
 
@@ -253,7 +209,7 @@ fun PlayerViewContent(
                             contentDescription = "Repeat Queue",
                             colorFilter = ColorFilter.tint(Color.Red),
                             modifier = Modifier.clickable {
-                                playerActions.onSetRepeatMode(Player.REPEAT_MODE_ONE)
+                                viewModel?.setRepeatMode(Player.REPEAT_MODE_ONE)
                             }
                         )
                 }
@@ -267,7 +223,7 @@ fun PlayerViewContent(
 fun PlayerViewPreview() {
     PlayerViewContent(
         rememberNavController(),
-        playerState = PlayerState(
+        state = PlayerState(
             Song(
                 0,
                 "".toUri(),
@@ -280,16 +236,7 @@ fun PlayerViewPreview() {
             hasPreviousSong = true,
             hasNextSong = true,
             shuffleModeEnabled = false,
-            repeatMode = Player.REPEAT_MODE_ONE
+            repeatMode = Player.REPEAT_MODE_OFF
         ),
-        playerActions = PlayerActions(
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {}
-        )
     )
 }

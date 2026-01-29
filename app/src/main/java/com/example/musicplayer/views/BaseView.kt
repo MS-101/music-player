@@ -1,28 +1,47 @@
 package com.example.musicplayer.views
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.components.NavPanel
+import com.example.musicplayer.components.PlayerPanel
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
+import com.example.musicplayer.view_models.PlayerViewModel
 
 @Composable
 fun BaseView(
     navController: NavController,
+    playerViewModel: PlayerViewModel? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
         bottomBar = {
-            NavPanel(navController)
+            Column {
+                if (playerViewModel != null) {
+                    val song by playerViewModel.song
+
+                    if (song != null) {
+                        PlayerPanel(
+                            navController = navController,
+                            viewModel = playerViewModel
+                        )
+                    }
+                }
+
+                NavPanel(navController)
+            }
         }
     ) {
         innerPadding -> Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
         ) {
             content()
         }

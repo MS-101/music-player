@@ -24,11 +24,14 @@ fun SetupNavGraph(
         composable(
             route = View.Player.route
         ) {
-            PlayerView(navController, playerViewModel)
+            PlayerView(
+                navController = navController,
+                viewModel = playerViewModel
+            )
         }
 
         songsNavGraph(navController, playerViewModel)
-        albumsNavGraph(navController)
-        playlistsNavGraph(navController)
+        albumsNavGraph(navController, playerViewModel)
+        playlistsNavGraph(navController, playerViewModel)
     }
 }
