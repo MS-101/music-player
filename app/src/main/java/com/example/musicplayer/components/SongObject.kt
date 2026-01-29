@@ -17,28 +17,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.core.net.toUri
 import com.example.musicplayer.R
 import com.example.musicplayer.models.Song
-import com.example.musicplayer.navigation.View
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 import com.example.musicplayer.utils.toMmSs
-import androidx.core.net.toUri
 
 @Composable
 fun SongObject(
-    navController: NavController,
-    song: Song
+    song: Song,
+    onSongClick : () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth().height(200.dp)
             .padding(24.dp)
             .clickable {
-                navController.navigate(
-                    View.SongDetail.passId(song.id)
-                )
+                onSongClick()
             }
     ) {
         Row {
@@ -77,14 +72,7 @@ fun SongObject(
 fun SongObjectPreview() {
     MusicPlayerTheme {
         SongObject(
-            rememberNavController(),
-            Song(
-                0,
-                "".toUri(),
-                "Title",
-                "Artist",
-                38000
-            )
-        )
+            Song(0,"".toUri(),"Title","Artist",38000)
+        ) {}
     }
 }

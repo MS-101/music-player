@@ -6,12 +6,9 @@ const val ALBUMS_ROUTE = "albums"
 const val PLAYLISTS_ROUTE = "playlists"
 
 sealed class View(val route: String) {
+    object Player: View(route = "player_screen")
+
     object Songs: View(route = "songs_screen")
-    object SongDetail: View(route = "song_detail_screen/{id}") {
-        fun passId(id: Long): String {
-            return this.route.replace("{id}", id.toString())
-        }
-    }
 
     object Albums: View(route = "albums_screen")
     object AlbumDetail: View(route = "album_detail_screen/{id}") {

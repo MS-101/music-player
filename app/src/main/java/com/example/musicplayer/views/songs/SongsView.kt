@@ -3,7 +3,7 @@ package com.example.musicplayer.views.songs
 import SongObject
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -15,30 +15,37 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.models.Song
+import com.example.musicplayer.navigation.View
+import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 import com.example.musicplayer.view_models.SongsViewModel
 
 @Composable
 fun SongsView(
     navController: NavController,
-    viewModel: SongsViewModel = viewModel()
+    viewModel: SongsViewModel = viewModel(),
+    playerViewModel: PlayerViewModel
 ) {
     val songs by viewModel.songs.observeAsState(emptyList())
 
-    SongsViewContent(navController, songs)
+    SongsViewContent(navController, songs, playerViewModel)
 }
 
 @Composable
 fun SongsViewContent(
     navController: NavController,
-    songs: List<Song>
+    songs: List<Song>,
+    playerViewModel: PlayerViewModel? = null
 ) {
     BaseView(navController) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(songs) {
-                song -> SongObject(navController, song)
+            itemsIndexed(songs) {
+                index, song -> SongObject(song, onSongClick = {
+                    playerViewModel?.setSongs(songs, index)
+                    navController.navigate(View.Player.route)
+                })
             }
         }
     }
