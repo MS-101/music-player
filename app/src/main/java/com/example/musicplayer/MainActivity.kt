@@ -13,6 +13,7 @@ import com.example.musicplayer.navigation.nav_graph.SetupNavGraph
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 
 class MainActivity : ComponentActivity() {
+
     lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {

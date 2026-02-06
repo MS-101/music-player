@@ -3,6 +3,7 @@ package com.example.musicplayer.views.songs
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -10,11 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.components.SongObject
+import com.example.musicplayer.components.objects.SongObject
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
@@ -40,7 +42,7 @@ fun SongsViewContent(
 ) {
     BaseView(navController, playerViewModel) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
             itemsIndexed(songs) {
                 index, song -> SongObject(song, onClick = {
@@ -57,8 +59,8 @@ fun SongsViewPreview() {
     SongsViewContent(
         rememberNavController(),
         songs = listOf(
-            Song(1, "".toUri(), "Song 1", "Artist A", 64000),
-            Song(2, "".toUri(), "Song 2", "Artist B", 51000)
+            Song(0, "".toUri(), "Song 1", "Artist A", 64000),
+            Song(1, "".toUri(), "Song 2", "Artist B", 51000)
         )
     )
 }

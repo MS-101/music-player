@@ -1,4 +1,4 @@
-package com.example.musicplayer.components
+package com.example.musicplayer.components.layout
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.example.musicplayer.components
+package com.example.musicplayer.components.layout
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,7 +36,8 @@ fun NavPanelItem(
         Text(
             label,
             color = Color.Black,
-            fontWeight = if (routeActive) FontWeight.Bold else FontWeight.Normal
+            fontWeight = if (routeActive) FontWeight.Bold else FontWeight.Normal,
+            fontSize = 24.sp
         )
     }
 }

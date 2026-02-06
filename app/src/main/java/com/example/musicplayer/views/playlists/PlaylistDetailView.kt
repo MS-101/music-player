@@ -1,49 +1,65 @@
 package com.example.musicplayer.views.playlists
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.musicplayer.models.Playlist
 import com.example.musicplayer.view_models.PlayerViewModel
+import com.example.musicplayer.view_models.PlaylistsViewModel
 import com.example.musicplayer.views.BaseView
 
 @Composable
 fun PlaylistDetailView(
     navController: NavController,
-    playerViewModel: PlayerViewModel? = null
+    playerViewModel: PlayerViewModel? = null,
+    viewModel: PlaylistsViewModel = viewModel()
 ) {
-    val id = navController.currentBackStackEntry?.arguments?.getInt("id") ?: 0
+    val id = navController.currentBackStackEntry?.arguments?.getLong("id") ?: 0
 
-    BaseView(navController, playerViewModel) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+    val playlists by viewModel.playlists.observeAsState(emptyList())
+    val playlist = playlists.firstOrNull { it.id == id }
+
+    if (playlist != null) {
+        PlaylistDetailViewContent(
+            navController,
+            playerViewModel,
+            playlist
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlaylistDetailViewContent(
+    navController: NavController,
+    playerViewModel: PlayerViewModel? = null,
+    playlist: Playlist
+) {
+    BaseView(
+        navController,
+        playerViewModel,
+        playlist.name
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
-            Text(
-                "Playlist - $id",
-                color = Color.Red,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Button(
-                {
-                    navController.popBackStack()
-                }
-            ) {
-                Text("Return")
+            /*
+            itemsIndexed(playlist.songs) {
+                index, song -> SongObject(song, onClick = {
+                    playerViewModel?.setSongs(playlist.songs, index)
+                })
             }
+            */
         }
     }
 }
@@ -51,7 +67,8 @@ fun PlaylistDetailView(
 @Preview(showBackground = true)
 @Composable
 fun PlaylistDetailViewPreview() {
-    PlaylistDetailView(
-        rememberNavController()
+    PlaylistDetailViewContent(
+        rememberNavController(),
+        playlist = Playlist(0, "Playlist")
     )
 }

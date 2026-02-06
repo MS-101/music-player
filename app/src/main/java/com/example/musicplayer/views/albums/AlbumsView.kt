@@ -1,6 +1,9 @@
 package com.example.musicplayer.views.albums
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -8,16 +11,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.components.AlbumObject
+import com.example.musicplayer.components.objects.AlbumObject
 import com.example.musicplayer.models.Album
 import com.example.musicplayer.view_models.AlbumsViewModel
 import com.example.musicplayer.view_models.PlayerViewModel
 import com.example.musicplayer.views.BaseView
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AlbumsView(
     navController: NavController,
@@ -37,7 +42,7 @@ fun AlbumsViewContent(
 ) {
     BaseView(navController, playerViewModel) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
             items(albums) {
                 album -> AlbumObject(navController, album)

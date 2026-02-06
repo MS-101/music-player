@@ -32,7 +32,7 @@ fun NavGraphBuilder.playlistsNavGraph(
         composable(
             route = View.PlaylistDetail.route,
             arguments = listOf(navArgument("id") {
-                type = NavType.IntType
+                type = NavType.LongType
             })
         ) {
             PlaylistDetailView(

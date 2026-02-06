@@ -1,49 +1,85 @@
 package com.example.musicplayer.views.playlists
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.navigation.View
+import com.example.musicplayer.components.objects.PlaylistObject
+import com.example.musicplayer.components.dialogs.CreatePlaylistDialog
+import com.example.musicplayer.models.Playlist
 import com.example.musicplayer.view_models.PlayerViewModel
+import com.example.musicplayer.view_models.PlaylistsViewModel
 import com.example.musicplayer.views.BaseView
 
 @Composable
 fun PlaylistsView(
     navController: NavController,
-    playerViewModel: PlayerViewModel? = null
+    playerViewModel: PlayerViewModel? = null,
+    viewModel: PlaylistsViewModel = viewModel()
 ) {
+    val playlists by viewModel.playlists.observeAsState(emptyList())
+
+    PlaylistsViewContent(navController, playerViewModel, playlists, viewModel)
+}
+
+@Composable
+fun PlaylistsViewContent(
+    navController: NavController,
+    playerViewModel: PlayerViewModel? = null,
+    playlists: List<Playlist>,
+    viewModel: PlaylistsViewModel? = null
+) {
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        CreatePlaylistDialog(
+            onConfirm = { playlistName ->
+                viewModel?.addPlaylist(playlistName)
+                showDialog.value = false
+            },
+            onDismiss = {
+                showDialog.value = false
+            }
+        )
+    }
+
     BaseView(navController, playerViewModel) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
-            Text(
-                "Playlists",
-                color = Color.Red,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
             Button(
-                {
-                    navController.navigate(
-                        View.PlaylistDetail.passId(1)
-                    )
-                }
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    showDialog.value = true
+                },
             ) {
-                Text("Playlist Detail")
+                Text("Create Playlist")
+            }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(playlists) {
+                        playlist -> PlaylistObject(navController, playlist, viewModel)
+                }
             }
         }
     }
@@ -52,7 +88,11 @@ fun PlaylistsView(
 @Preview(showBackground = true)
 @Composable
 fun PlaylistsViewPreview() {
-    PlaylistsView(
-        rememberNavController()
+    PlaylistsViewContent(
+        rememberNavController(),
+        playlists = listOf(
+            Playlist(1, "Playlist 1"),
+            Playlist(2, "Playlist 2")
+        )
     )
 }
