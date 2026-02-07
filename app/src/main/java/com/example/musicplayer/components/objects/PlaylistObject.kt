@@ -1,5 +1,7 @@
 package com.example.musicplayer.components.objects
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -28,16 +30,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
 import com.example.musicplayer.components.dialogs.DeletePlaylistDialog
 import com.example.musicplayer.components.dialogs.EditPlaylistDialog
 import com.example.musicplayer.models.Playlist
+import com.example.musicplayer.models.Song
 import com.example.musicplayer.navigation.View
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 import com.example.musicplayer.view_models.PlaylistsViewModel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun PlaylistObject(
     navController: NavController,
@@ -49,8 +54,7 @@ fun PlaylistObject(
         EditPlaylistDialog(
             playlist,
             onConfirm = { name ->
-                playlist.name = name
-                viewModel?.updatePlaylist(playlist)
+                viewModel?.updatePlaylist(playlist.id, name)
                 showEditDialog.value = false
             },
             onDismiss = {
@@ -64,7 +68,7 @@ fun PlaylistObject(
         DeletePlaylistDialog(
             playlist,
             onConfirm = {
-                viewModel?.deletePlaylist(playlist)
+                viewModel?.deletePlaylist(playlist.id)
                 showDeleteDialog.value = false
             },
             onDismiss = {
@@ -108,7 +112,7 @@ fun PlaylistObject(
                     )
 
                     Text(
-                        text = "0 songs",
+                        text = "${playlist.songs.size} songs",
                         fontSize = 20.sp,
                     )
                 }
@@ -153,13 +157,17 @@ fun PlaylistObject(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun PlaylistObjectPreview() {
     MusicPlayerTheme {
         PlaylistObject(
             rememberNavController(),
-            Playlist(0, "Playlist 1")
+            Playlist(0, "Playlist 1", listOf(
+                Song(1, "".toUri(), "Song 1", "Artist", 64000),
+                Song(2, "".toUri(), "Song 2", "Artist", 51000)
+            ))
         )
     }
 }

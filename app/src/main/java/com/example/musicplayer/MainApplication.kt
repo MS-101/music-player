@@ -2,7 +2,7 @@ package com.example.musicplayer
 
 import android.app.Application
 import androidx.room.Room
-import com.example.musicplayer.models.MusicPlayerDatabase
+import com.example.musicplayer.room.MusicPlayerDatabase
 
 class MainApplication : Application() {
     companion object {
