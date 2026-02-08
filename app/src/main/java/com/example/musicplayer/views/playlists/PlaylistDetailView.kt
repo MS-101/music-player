@@ -38,16 +38,19 @@ fun PlaylistDetailView(
         PlaylistDetailViewContent(
             navController,
             playerViewModel,
+            viewModel,
             playlist
         )
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistDetailViewContent(
     navController: NavController,
     playerViewModel: PlayerViewModel? = null,
+    viewModel: PlaylistsViewModel? = null,
     playlist: Playlist
 ) {
     BaseView(
@@ -59,7 +62,7 @@ fun PlaylistDetailViewContent(
             modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
             itemsIndexed(playlist.songs) {
-                index, song -> SongObject(song, onClick = {
+                index, song -> SongObject(song, playlistsViewModel = viewModel, playlist = playlist, onClick = {
                     playerViewModel?.setSongs(playlist.songs, index)
                 })
             }
@@ -67,6 +70,7 @@ fun PlaylistDetailViewContent(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun PlaylistDetailViewPreview() {

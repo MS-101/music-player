@@ -12,10 +12,8 @@ data class PlaylistEntity (
     val name: String
 )
 
-@Entity(tableName = "playlist_item")
+@Entity(tableName = "playlist_item", primaryKeys = ["playlistId", "songId"])
 data class PlaylistItemEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
     val playlistId: Long,
     val songId: Long
 )

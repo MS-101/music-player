@@ -11,6 +11,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         db = Room.databaseBuilder(
             applicationContext,
             MusicPlayerDatabase::class.java,

@@ -20,6 +20,7 @@ import com.example.musicplayer.components.objects.AlbumObject
 import com.example.musicplayer.models.Album
 import com.example.musicplayer.view_models.AlbumsViewModel
 import com.example.musicplayer.view_models.PlayerViewModel
+import com.example.musicplayer.view_models.PlaylistsViewModel
 import com.example.musicplayer.views.BaseView
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -28,29 +29,33 @@ fun AlbumsView(
     navController: NavController,
     playerViewModel: PlayerViewModel,
     viewModel: AlbumsViewModel = viewModel(),
+    playlistsViewModel: PlaylistsViewModel = viewModel()
 ) {
     val albums by viewModel.albums.observeAsState(emptyList())
 
-    AlbumsViewContent(navController, playerViewModel, albums)
+    AlbumsViewContent(navController, playerViewModel, albums, playlistsViewModel)
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AlbumsViewContent(
     navController: NavController,
     playerViewModel: PlayerViewModel? = null,
     albums: List<Album>,
+    playlistsViewModel: PlaylistsViewModel? = null
 ) {
     BaseView(navController, playerViewModel) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
             items(albums) {
-                album -> AlbumObject(navController, album)
+                album -> AlbumObject(navController, album, playlistsViewModel)
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun AlbumsViewPreview() {

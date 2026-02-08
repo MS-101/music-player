@@ -16,6 +16,7 @@ import com.example.musicplayer.MainApplication
 import com.example.musicplayer.models.Playlist
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.room.PlaylistEntity
+import com.example.musicplayer.room.PlaylistItemEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -133,19 +134,41 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun addPlaylist(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistDao.addPlaylist(PlaylistEntity(0, name))
+            playlistDao.addPlaylist(
+                PlaylistEntity(0, name)
+            )
         }
     }
 
     fun updatePlaylist(id: Long, name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistDao.updatePlaylist(PlaylistEntity(id, name))
+            playlistDao.updatePlaylist(
+                PlaylistEntity(id, name)
+            )
         }
     }
 
     fun deletePlaylist(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            playlistDao.deletePlaylist(PlaylistEntity(id, ""))
+            playlistDao.deletePlaylist(
+                PlaylistEntity(id, "")
+            )
+        }
+    }
+
+    fun addSongToPlaylist(song: Song, playlist: Playlist) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistDao.addPlaylistItem(
+                PlaylistItemEntity(playlist.id, song.id)
+            )
+        }
+    }
+
+    fun removeSongFromPlaylist(song: Song, playlist: Playlist) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistDao.deletePlaylistItem(
+                PlaylistItemEntity(playlist.id, song.id)
+            )
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.musicplayer.components.objects
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -19,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,15 +34,43 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.example.musicplayer.R
+import com.example.musicplayer.components.dialogs.AddToPlaylistDialogue
+import com.example.musicplayer.models.Playlist
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 import com.example.musicplayer.utils.toMmSs
+import com.example.musicplayer.view_models.PlaylistsViewModel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SongObject(
     song: Song,
-    onClick : () -> Unit
+    playlist: Playlist? = null,
+    onClick: () -> Unit = {},
+    playlistsViewModel: PlaylistsViewModel? = null
 ) {
+    val showAddToPlaylistDialog = remember { mutableStateOf(false) }
+
+    if (playlistsViewModel != null) {
+        if (showAddToPlaylistDialog.value) {
+            val playlists = playlistsViewModel.getAllPlaylists().observeAsState(emptyList()).value
+
+            AddToPlaylistDialogue(
+                playlists = playlists,
+                onConfirm = { selectedPlaylists ->
+                    selectedPlaylists.forEach { playlist ->
+                        playlistsViewModel.addSongToPlaylist(song, playlist)
+                    }
+
+                    showAddToPlaylistDialog.value = false
+                },
+                onDismiss = {
+                    showAddToPlaylistDialog.value = false
+                }
+            )
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,16 +135,30 @@ fun SongObject(
                         )
                     }
 
-                    DropdownMenu(
-                        expanded = dropdownExpanded,
-                        onDismissRequest = { dropdownExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Add To Playlist") },
-                            onClick = {
-                                dropdownExpanded = false
+                    if (playlistsViewModel != null) {
+                        DropdownMenu(
+                            expanded = dropdownExpanded,
+                            onDismissRequest = { dropdownExpanded = false }
+                        ) {
+                            if (playlist == null) {
+                                DropdownMenuItem(
+                                    text = { Text("Add To Playlist") },
+                                    onClick = {
+                                        showAddToPlaylistDialog.value = true
+                                        dropdownExpanded = false
+                                    }
+                                )
+                            } else {
+                                DropdownMenuItem(
+                                    text = { Text("Remove From Playlist") },
+                                    onClick = {
+                                        playlistsViewModel.removeSongFromPlaylist(song, playlist)
+
+                                        dropdownExpanded = false
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -121,12 +166,13 @@ fun SongObject(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun SongObjectPreview() {
     MusicPlayerTheme {
         SongObject(
             Song(0, "".toUri(), "Title", "Artist", 38000)
-        ) {}
+        )
     }
 }

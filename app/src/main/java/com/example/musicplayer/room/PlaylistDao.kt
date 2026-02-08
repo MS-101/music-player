@@ -28,6 +28,9 @@ interface PlaylistDao {
     @Delete
     suspend fun deletePlaylist(playlist: PlaylistEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPlaylistItem(item: PlaylistItemEntity)
+
     @Delete
     suspend fun deletePlaylistItem(item: PlaylistItemEntity)
 }

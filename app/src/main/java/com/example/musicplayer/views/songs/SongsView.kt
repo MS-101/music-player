@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.components.objects.SongObject
 import com.example.musicplayer.models.Song
 import com.example.musicplayer.view_models.PlayerViewModel
+import com.example.musicplayer.view_models.PlaylistsViewModel
 import com.example.musicplayer.views.BaseView
 import com.example.musicplayer.view_models.SongsViewModel
 
@@ -27,17 +28,20 @@ import com.example.musicplayer.view_models.SongsViewModel
 fun SongsView(
     navController: NavController,
     playerViewModel: PlayerViewModel,
+    playlistsViewModel: PlaylistsViewModel = viewModel(),
     viewModel: SongsViewModel = viewModel()
 ) {
     val songs by viewModel.songs.observeAsState(emptyList())
 
-    SongsViewContent(navController, playerViewModel, songs)
+    SongsViewContent(navController, playerViewModel, playlistsViewModel, songs)
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SongsViewContent(
     navController: NavController,
     playerViewModel: PlayerViewModel? = null,
+    playlistsViewModel: PlaylistsViewModel? = null,
     songs: List<Song>
 ) {
     BaseView(navController, playerViewModel) {
@@ -45,7 +49,7 @@ fun SongsViewContent(
             modifier = Modifier.fillMaxSize().padding(5.dp)
         ) {
             itemsIndexed(songs) {
-                index, song -> SongObject(song, onClick = {
+                index, song -> SongObject(song, playlistsViewModel = playlistsViewModel, onClick = {
                     playerViewModel?.setSongs(songs, index)
                 })
             }
@@ -53,6 +57,7 @@ fun SongsViewContent(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Preview(showBackground = true)
 @Composable
 fun SongsViewPreview() {
